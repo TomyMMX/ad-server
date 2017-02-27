@@ -7,7 +7,8 @@ import (
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
+     fmt.Fprintln(w, "Ads REST API")
+     //TODO: serve the API documentation or something
 }
 
 func AdsIndex(w http.ResponseWriter, r *http.Request) {

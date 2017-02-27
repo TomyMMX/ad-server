@@ -14,6 +14,8 @@ type Route struct {
     HandlerFunc http.HandlerFunc
 }
 
+type Routes []Route
+
 func NewRouter() *mux.Router {
 
     //use the mux router to find the correct handlers
@@ -38,13 +40,13 @@ var routes = Routes{
     Route{
         "AdsIndex",
         "GET",
-        "/ads",
+        "/api/ads",
         AdsIndex,
     },
     Route{
         "OneAd",
         "GET",
-        "/ads/{adId}",
+        "/api/ads/{adId}",
         OneAd,
     },
 }
