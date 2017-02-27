@@ -1,5 +1,9 @@
 package main
 
+import (
+    "time"
+)
+
 type Ad struct {
     Id        uint32    `json:"id"`  
     FolderId  uint32    `json:"folderid"`
