@@ -229,3 +229,23 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
         }
     }
 }
+
+func RemoveFolder(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)	
+	folderId, err := strconv.Atoi(vars["folderId"])
+    
+    //parsing the folderId was not successful
+    if err != nil {
+        PrepareAPIResponse(w, err, 0)
+        return
+    }
+    
+    err = data.RemoveFolder(folderId)
+    
+    if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
+        s.Reason = "Successfully removed folder with id: " + vars["folderId"]
+        if err := json.NewEncoder(w).Encode(s); err != nil {
+            panic(err)
+        }
+    }
+}

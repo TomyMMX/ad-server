@@ -117,3 +117,40 @@ func AddFolder(f Folder, parrentId int) error {
 
 	return err
 }
+
+func RemoveFolder(folderId int) error {
+    db, err := PrepareDbConnection()
+
+	if err != nil {
+		return err
+	}
+    
+    folderCount := 1
+    err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE parrentid = ?", folderId)
+        
+    if folderCount != 0{
+        return errors.New("This folder contains at least one other folder. Delete that first.")
+    }
+    
+    //begin transaction
+    tx, err := db.Begin()
+    
+    //delete all ads that are in this folder
+    _, err = tx.Exec("DELETE FROM ad WHERE folderId=?", folderId)
+    if err != nil {
+        tx.Rollback()
+        return err;
+    }
+    
+    //delete the folder
+    _, err = tx.Exec("DELETE FROM folder WHERE id=?", folderId)
+    if err != nil {
+        tx.Rollback()
+        return err;
+    }
+    
+    //commit the whole transaction
+    err = tx.Commit()
+
+	return err
+}
