@@ -11,6 +11,7 @@ import (
 )
 
 func PrepareDbConnection() (*sqlx.DB, error) {
+    //TODO: should move the conenction string to some type of config
 	return sqlx.Open("mysql", "test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")
 }
 

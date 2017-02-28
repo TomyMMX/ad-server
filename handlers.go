@@ -36,7 +36,7 @@ func ReadRequestBody(r *http.Request) []byte {
     return body;
 }
 
-func PrepareAPIResponse(w http.ResponseWriter, err error) APIStatus{
+func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatus{
 	//since we know that we are returning JSON set the correct content type
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
     
@@ -55,7 +55,7 @@ func PrepareAPIResponse(w http.ResponseWriter, err error) APIStatus{
             panic(err)
         }
 	} else {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(okStatus)
         status = APIStatus{
             Status: "OK",            
         }    
@@ -83,7 +83,7 @@ func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 		ads, err = data.GetAds(folderId)
 	}
 
-	if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(ads); err != nil {
             panic(err)
         }
@@ -111,7 +111,7 @@ func AddAd(w http.ResponseWriter, r *http.Request) {
     err := json.Unmarshal(body, &ad)
         
     if err != nil {
-        PrepareAPIResponse(w, err)
+        PrepareAPIResponse(w, err, 0)
         return
     }
         
@@ -120,13 +120,13 @@ func AddAd(w http.ResponseWriter, r *http.Request) {
     
     //parsing the folderId was not successful
     if err != nil {
-        PrepareAPIResponse(w, err)
+        PrepareAPIResponse(w, err, 0)
         return
     }
         
     err = data.AddAd(ad, folderId)
     
-    if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+    if s := PrepareAPIResponse(w, err, http.StatusCreated); s.Status == "OK" {
         s.Reason = "Successfully added new ad in folder: " + vars["folderId"]
         if err := json.NewEncoder(w).Encode(s); err != nil {
             panic(err)
@@ -156,7 +156,7 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 		folders, err = data.GetFolders(parrentId)
 	}
 
-	if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(folders); err != nil {
             panic(err)
         }
@@ -183,7 +183,7 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
     err := json.Unmarshal(body, &folder)
         
     if err != nil {
-        PrepareAPIResponse(w, err)
+        PrepareAPIResponse(w, err, 0)
         return
     }
     
@@ -196,13 +196,13 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
     
     //parsing the parrentId was not successful
     if err != nil {
-        PrepareAPIResponse(w, err)
+        PrepareAPIResponse(w, err, 0)
         return
     }
         
     err = data.AddFolder(folder, parrentId)
     
-    if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+    if s := PrepareAPIResponse(w, err, http.StatusCreated); s.Status == "OK" {
         s.Reason = "Successfully added new folder in parrent: " + vars["parrentId"]
         if err := json.NewEncoder(w).Encode(s); err != nil {
             panic(err)
