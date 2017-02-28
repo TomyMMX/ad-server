@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -27,36 +26,23 @@ func PrepareAPIResponse(w http.ResponseWriter, err error) {
 	}
 }
 
-func AdsIndex(w http.ResponseWriter, r *http.Request) {
-	//get all ads at the root of the folder structure
-	ads, err := GetAds(0)
-
-	PrepareAPIResponse(w, err)
-
-	if err := json.NewEncoder(w).Encode(ads); err != nil {
-		panic(err)
-	}
-}
-
 func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
-	//here we are interested in the folder id
-	folderIds := vars["folderId"]
 
-	log.Printf(
-		"%s\t%s\t%s\t%s%s",
-		r.Method,
-		r.RequestURI,
-		"AdsInFolder",
-		"Requested ads of folder:",
-		folderIds,
-	)
+	var ads []Ad
+	var err error
 
-	folderId, _ := strconv.Atoi(folderIds)
+	if vars["folderId"] == "" {
+		//get all ads at the root of the folder structure
+		ads, err = GetAds(0)
+	} else {
+		//here we are interested in the folder id
+		folderId, _ := strconv.Atoi(vars["folderId"])
 
-	//get all ads in the specified folder
-	ads, err := GetAds(folderId)
+		//get all ads in the specified folder
+		ads, err = GetAds(folderId)
+	}
 
 	PrepareAPIResponse(w, err)
 
@@ -73,3 +59,29 @@ func OneAd(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Requested ad ID:", adId)
 
 }
+
+func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
+	//get the variables from the route
+	vars := mux.Vars(r)
+
+	var folders []Folder
+	var err error
+
+	if vars["parrentId"] == "" {
+		//get all folders at the root of the folder structure
+		folders, err = GetFolders(0)
+	} else {
+		//here we are interested in the id of the parrent folder
+		parrentId, _ := strconv.Atoi(vars["parrentId"])
+
+		//get all folders in the specified parrent folder
+		folders, err = GetFolders(parrentId)
+	}
+
+	PrepareAPIResponse(w, err)
+
+	if err := json.NewEncoder(w).Encode(folders); err != nil {
+		panic(err)
+	}
+}
+func OneFolder(w http.ResponseWriter, r *http.Request) {}

@@ -25,7 +25,7 @@ var routes = Routes{
 		"AdsIndex",
 		"GET",
 		"/api/ads",
-		AdsIndex,
+		AdsInFolder,
 	},
 	Route{
 		"AdsInFolder",
@@ -38,5 +38,23 @@ var routes = Routes{
 		"GET",
 		"/api/ads/{adId}",
 		OneAd,
+	},
+	Route{
+		"FoldersIndex",
+		"GET",
+		"/api/folders",
+		FoldersInFolder,
+	},
+	Route{
+		"FoldersInFolder",
+		"GET",
+		"/api/folders/parrent/{parrentId}",
+		FoldersInFolder,
+	},
+	Route{
+		"OneFodler",
+		"GET",
+		"/api/folders/{fodlerId}",
+		OneFolder,
 	},
 }
