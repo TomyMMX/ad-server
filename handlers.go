@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -28,6 +30,33 @@ func PrepareAPIResponse(w http.ResponseWriter, err error) {
 func AdsIndex(w http.ResponseWriter, r *http.Request) {
 	//get all ads at the root of the folder structure
 	ads, err := GetAds(0)
+
+	PrepareAPIResponse(w, err)
+
+	if err := json.NewEncoder(w).Encode(ads); err != nil {
+		panic(err)
+	}
+}
+
+func AdsInFolder(w http.ResponseWriter, r *http.Request) {
+	//get the variables from the route
+	vars := mux.Vars(r)
+	//here we are interested in the folder id
+	folderIds := vars["folderId"]
+
+	log.Printf(
+		"%s\t%s\t%s\t%s%s",
+		r.Method,
+		r.RequestURI,
+		"AdsInFolder",
+		"Requested ads of folder:",
+		folderIds,
+	)
+
+	folderId, _ := strconv.Atoi(folderIds)
+
+	//get all ads in the specified folder
+	ads, err := GetAds(folderId)
 
 	PrepareAPIResponse(w, err)
 
