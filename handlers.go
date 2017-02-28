@@ -134,6 +134,26 @@ func AddAd(w http.ResponseWriter, r *http.Request) {
     }
 }
 
+func RemoveAd(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)	
+	adId, err := strconv.Atoi(vars["adId"])
+    
+    //parsing the adId was not successful
+    if err != nil {
+        PrepareAPIResponse(w, err, 0)
+        return
+    }
+    
+    err = data.RemoveAd(adId)
+    
+    if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
+        s.Reason = "Successfully removed ad with id: " + vars["adId"]
+        if err := json.NewEncoder(w).Encode(s); err != nil {
+            panic(err)
+        }
+    }
+}
+
 /*FOLDER ENDPOINTS*/
 func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route

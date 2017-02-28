@@ -63,6 +63,18 @@ func AddAd(a Ad, folderId int) error {
 	return err
 }
 
+func RemoveAd(adId int) error {
+    db, err := PrepareDbConnection()
+
+	if err != nil {
+		return err
+	}
+    
+    _, err = db.Query("DELETE FROM ad WHERE id=?", adId)
+
+	return err
+}
+
 func GetFolders(parrentId int) (Folders, error) {
 	folders := Folders{}
 

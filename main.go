@@ -33,6 +33,12 @@ var routes = router.Routes{
 		"/api/ads/folder/{folderId}",
 		AddAd,
 	},
+    router.Route{
+		"RemoveAd",
+		"DELETE",
+		"/api/ads/{adId}",
+		RemoveAd,
+	},
 	router.Route{
 		"OneAd",
 		"GET",
