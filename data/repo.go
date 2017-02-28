@@ -5,6 +5,7 @@ import (
 	"errors"
     "strconv"
 
+    "github.com/asaskevich/govalidator"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
@@ -35,12 +36,20 @@ func AddAd(a Ad, folderId int) error {
 		return err
 	}
     
-    if(a.Name == ""){
+    if a.Name == "" {
         return errors.New("New ad name is empty.")
     }
+    
+    if a.Url == "" {
+        return errors.New("New ad URL is empty.")
+    }
+    
+    if !govalidator.IsURL(a.Url) {
+        return errors.New("New ad URL is invalid.")
+    }
         
-    folderCount := 0
-    err = db.Select(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", folderId)
+    var folderCount int
+    err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", folderId)
     
     if folderCount == 0{
         return errors.New("Folder with id " + strconv.Itoa(folderId) + " does not exist.")
@@ -75,14 +84,14 @@ func AddFolder(f Folder, parrentId int) error {
 		return err
 	}
     
-    if(f.Name == ""){
+    if f.Name == "" {
         return errors.New("New folder name is empty.")
     }
     
     //if adding int a existing folder, check if it exists
-    if(parrentId != 0){
+    if parrentId != 0 {
         folderCount := 0
-        err = db.Select(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", parrentId)
+        err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", parrentId)
         
         if folderCount == 0{
             return errors.New("Parrent folder with id " + strconv.Itoa(parrentId) + " does not exist.")
