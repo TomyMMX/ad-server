@@ -1,4 +1,4 @@
-package main
+package data
 
 import (
 	//"database/sql"
@@ -6,14 +6,15 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
+    "github.com/TomyMMX/ad-server/models"
 )
 
 func PrepareDbConnection() (*sqlx.DB, error) {
 	return sqlx.Open("mysql", "test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")
 }
 
-func GetAds(folderId int) (Ads, error) {
-	ads := Ads{}
+func GetAds(folderId int) (models.Ads, error) {
+	ads := models.Ads{}
 
 	db, err := PrepareDbConnection()
 
@@ -27,8 +28,8 @@ func GetAds(folderId int) (Ads, error) {
 	return ads, err
 }
 
-func GetFolders(parrentId int) (Folders, error) {
-	folders := Folders{}
+func GetFolders(parrentId int) (models.Folders, error) {
+	folders := models.Folders{}
 
 	db, err := PrepareDbConnection()
 
@@ -40,4 +41,17 @@ func GetFolders(parrentId int) (Folders, error) {
 	err = db.Select(&folders, "SELECT * FROM folder WHERE parrentid = ?", parrentId)
 
 	return folders, err
+}
+
+func AddFolder(f models.Folder, parrentId int) error {
+	db, err := PrepareDbConnection()
+
+	if err != nil {
+		return err
+	}
+
+	//get all ads in the desired folder
+	_, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", f.ParrentId, f.Name)
+
+	return err
 }

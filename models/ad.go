@@ -1,14 +1,15 @@
-package main
+package models
 
 import (
 	"time"
 )
 
-type Folder struct {
+type Ad struct {
 	Id           uint32    `json:"id"`
-	ParrentId    uint32    `json:"parrentid"` //if 0 then this folder is at the root level
+	FolderId     uint32    `json:"folderid"`
 	Name         string    `json:"name"`
+	Url          string    `json:"url"`
 	LastModified time.Time `json:"lastmodified"`
 }
 
-type Folders []Folder
+type Ads []Ad

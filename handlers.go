@@ -7,6 +7,8 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+    "github.com/TomyMMX/ad-server/models"
+    "github.com/TomyMMX/ad-server/data"
 )
 
 func Index(w http.ResponseWriter, r *http.Request) {
@@ -30,18 +32,18 @@ func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
 
-	var ads []Ad
+	var ads []models.Ad
 	var err error
 
 	if vars["folderId"] == "" {
 		//get all ads at the root of the folder structure
-		ads, err = GetAds(0)
+		ads, err = data.GetAds(0)
 	} else {
 		//here we are interested in the folder id
 		folderId, _ := strconv.Atoi(vars["folderId"])
 
 		//get all ads in the specified folder
-		ads, err = GetAds(folderId)
+		ads, err = data.GetAds(folderId)
 	}
 
 	PrepareAPIResponse(w, err)
@@ -63,12 +65,12 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
 
-	var folders []Folder
+	var folders []models.Folder
 	var err error
 
 	if vars["parrentId"] == "" {
 		//get all folders at the root of the folder structure
-		folders, err = GetFolders(0)
+		folders, err = data.GetFolders(0)
 	} else {
 		//here we are interested in the id of the parrent folder
 		parrentId, _ := strconv.Atoi(vars["parrentId"])
@@ -77,7 +79,7 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 		//and we will return folders at root
 
 		//get all folders in the specified parrent folder
-		folders, err = GetFolders(parrentId)
+		folders, err = data.GetFolders(parrentId)
 	}
 
 	PrepareAPIResponse(w, err)
@@ -87,3 +89,7 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func OneFolder(w http.ResponseWriter, r *http.Request) {}
+
+func AddFolder(w http.ResponseWriter, r *http.Request) {
+
+}
