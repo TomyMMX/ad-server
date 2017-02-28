@@ -28,6 +28,31 @@ func GetAds(folderId int) (Ads, error) {
 	return ads, err
 }
 
+func AddAd(a Ad, folderId int) error {
+	db, err := PrepareDbConnection()
+
+	if err != nil {
+		return err
+	}
+    
+    if(a.Name == ""){
+        return errors.New("New ad name is empty.")
+    }
+        
+    folderCount := 0
+    err = db.Select(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", folderId)
+    
+    if folderCount == 0{
+        return errors.New("Folder with id " + strconv.Itoa(folderId) + " does not exist.")
+    }
+        
+    //also checked that this way of composing the sql query is safe against SQL injection
+	//add this folder to the database
+	_, err = db.Query("INSERT INTO ad (folderid, name, url) VALUES (?, ?, ?)", folderId, a.Name, a.Url)
+
+	return err
+}
+
 func GetFolders(parrentId int) (Folders, error) {
 	folders := Folders{}
 
@@ -54,11 +79,14 @@ func AddFolder(f Folder, parrentId int) error {
         return errors.New("New folder name is empty.")
     }
     
-    folderCount := 0
-    err = db.Select(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", parrentId)
-    
-    if folderCount == 0{
-        return errors.New("Parrent folder with id " + strconv.Itoa(parrentId) + " does not exist.")
+    //if adding int a existing folder, check if it exists
+    if(parrentId != 0){
+        folderCount := 0
+        err = db.Select(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", parrentId)
+        
+        if folderCount == 0{
+            return errors.New("Parrent folder with id " + strconv.Itoa(parrentId) + " does not exist.")
+        }
     }
     
     //also checked that this way of composing the sql query is safe against SQL injection

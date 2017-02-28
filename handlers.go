@@ -23,6 +23,19 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	//TODO: serve the API documentation or something
 }
 
+func ReadRequestBody(r *http.Request) []byte {
+    //limit reader so users can't flood us with large amounts of data
+    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+    if err != nil {
+        panic(err)
+    }
+    if err := r.Body.Close(); err != nil {
+        panic(err)
+    }
+    
+    return body;
+}
+
 func PrepareAPIResponse(w http.ResponseWriter, err error) APIStatus{
 	//since we know that we are returning JSON set the correct content type
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -51,6 +64,7 @@ func PrepareAPIResponse(w http.ResponseWriter, err error) APIStatus{
     return status
 }
 
+/*AD ENDPOINTS*/
 func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
@@ -86,6 +100,41 @@ func OneAd(w http.ResponseWriter, r *http.Request) {
     //TODO: implement return of one specific ad
 }
 
+func AddAd(w http.ResponseWriter, r *http.Request) {
+    var ad data.Ad
+    
+    //get the variables from the route
+	vars := mux.Vars(r)
+    
+    body := ReadRequestBody(r)
+    //unmarshal into our Folder struct
+    err := json.Unmarshal(body, &ad)
+        
+    if err != nil {
+        PrepareAPIResponse(w, err)
+        return
+    }
+        
+    var folderId int
+    folderId, err = strconv.Atoi(vars["folderId"])
+    
+    //parsing the folderId was not successful
+    if err != nil {
+        PrepareAPIResponse(w, err)
+        return
+    }
+        
+    err = data.AddAd(ad, folderId)
+    
+    if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+        s.Reason = "Successfully added new ad in folder: " + vars["folderId"]
+        if err := json.NewEncoder(w).Encode(s); err != nil {
+            panic(err)
+        }
+    }
+}
+
+/*FOLDER ENDPOINTS*/
 func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
@@ -113,18 +162,14 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
         }
     }
 }
-func OneFolder(w http.ResponseWriter, r *http.Request) {}
-
-func ReadRequestBody(r *http.Request) []byte {
-    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-    if err != nil {
-        panic(err)
-    }
-    if err := r.Body.Close(); err != nil {
-        panic(err)
-    }
+func OneFolder(w http.ResponseWriter, r *http.Request) {
+    //get the variables from the route
+	vars := mux.Vars(r)
+	//here we are interested in the ad id
+	folderId := vars["folderId"]
+	fmt.Fprintln(w, "Requested folder ID:", folderId)
     
-    return body;
+    //TODO: implement return of one specific folder
 }
 
 func AddFolder(w http.ResponseWriter, r *http.Request) {
@@ -158,7 +203,7 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
     err = data.AddFolder(folder, parrentId)
     
     if s := PrepareAPIResponse(w, err); s.Status == "OK" {
-        s.Reason = "Successfully added new folder in parrent: "+strconv.Itoa(parrentId)
+        s.Reason = "Successfully added new folder in parrent: " + vars["parrentId"]
         if err := json.NewEncoder(w).Encode(s); err != nil {
             panic(err)
         }

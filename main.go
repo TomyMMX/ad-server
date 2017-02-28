@@ -27,6 +27,12 @@ var routes = router.Routes{
 		"/api/ads/folder/{folderId}",
 		AdsInFolder,
 	},
+    router.Route{
+		"AddAdInFolder",
+		"POST",
+		"/api/ads/folder/{folderId}",
+		AddAd,
+	},
 	router.Route{
 		"OneAd",
 		"GET",
@@ -60,7 +66,7 @@ var routes = router.Routes{
 	router.Route{
 		"OneFodler",
 		"GET",
-		"/api/folders/{fodlerId}",
+		"/api/folders/{folderId}",
 		OneFolder,
 	},
 }
