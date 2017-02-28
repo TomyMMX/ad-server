@@ -5,34 +5,57 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+    "io"
+    "io/ioutil"
 
 	"github.com/gorilla/mux"
-    "github.com/TomyMMX/ad-server/models"
     "github.com/TomyMMX/ad-server/data"
 )
+
+type APIStatus struct {
+	Status  string  `json:"status"`
+    Code    string  `json:"code"`
+    Reason  string  `json:"reason"`
+}
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Ads REST API")
 	//TODO: serve the API documentation or something
 }
 
-func PrepareAPIResponse(w http.ResponseWriter, err error) {
+func PrepareAPIResponse(w http.ResponseWriter, err error) APIStatus{
 	//since we know that we are returning JSON set the correct content type
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-
+    
+    var status APIStatus
+    
 	//set the status code
 	if err != nil {
+        //TODO: set correct response status for different error types
 		w.WriteHeader(http.StatusBadRequest)
+        status = APIStatus{
+            Status: "Error",
+            Reason: err.Error(),
+        }    
+
+        if err := json.NewEncoder(w).Encode(status); err != nil {
+            panic(err)
+        }
 	} else {
 		w.WriteHeader(http.StatusOK)
+        status = APIStatus{
+            Status: "OK",            
+        }    
 	}
+    
+    return status
 }
 
 func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
 
-	var ads []models.Ad
+	var ads []data.Ad
 	var err error
 
 	if vars["folderId"] == "" {
@@ -46,11 +69,11 @@ func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 		ads, err = data.GetAds(folderId)
 	}
 
-	PrepareAPIResponse(w, err)
-
-	if err := json.NewEncoder(w).Encode(ads); err != nil {
-		panic(err)
-	}
+	if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+        if err := json.NewEncoder(w).Encode(ads); err != nil {
+            panic(err)
+        }
+    }
 }
 
 func OneAd(w http.ResponseWriter, r *http.Request) {
@@ -59,13 +82,15 @@ func OneAd(w http.ResponseWriter, r *http.Request) {
 	//here we are interested in the ad id
 	adId := vars["adId"]
 	fmt.Fprintln(w, "Requested ad ID:", adId)
+    
+    //TODO: implement return of one specific ad
 }
 
 func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
 
-	var folders []models.Folder
+	var folders []data.Folder
 	var err error
 
 	if vars["parrentId"] == "" {
@@ -82,14 +107,60 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 		folders, err = data.GetFolders(parrentId)
 	}
 
-	PrepareAPIResponse(w, err)
-
-	if err := json.NewEncoder(w).Encode(folders); err != nil {
-		panic(err)
-	}
+	if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+        if err := json.NewEncoder(w).Encode(folders); err != nil {
+            panic(err)
+        }
+    }
 }
 func OneFolder(w http.ResponseWriter, r *http.Request) {}
 
-func AddFolder(w http.ResponseWriter, r *http.Request) {
+func ReadRequestBody(r *http.Request) []byte {
+    body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+    if err != nil {
+        panic(err)
+    }
+    if err := r.Body.Close(); err != nil {
+        panic(err)
+    }
+    
+    return body;
+}
 
+func AddFolder(w http.ResponseWriter, r *http.Request) {
+    var folder data.Folder
+    
+    //get the variables from the route
+	vars := mux.Vars(r)
+    
+    body := ReadRequestBody(r)
+    //unmarshal into our Folder struct
+    err := json.Unmarshal(body, &folder)
+        
+    if err != nil {
+        PrepareAPIResponse(w, err)
+        return
+    }
+    
+    var parrentId int
+    if vars["parrentId"] == "" {
+        parrentId = 0
+    } else {
+        parrentId, err = strconv.Atoi(vars["parrentId"])
+    }
+    
+    //parsing the parrentId was not successful
+    if err != nil {
+        PrepareAPIResponse(w, err)
+        return
+    }
+        
+    err = data.AddFolder(folder, parrentId)
+    
+    if s := PrepareAPIResponse(w, err); s.Status == "OK" {
+        s.Reason = "Successfully added new folder in parrent: "+strconv.Itoa(parrentId)
+        if err := json.NewEncoder(w).Encode(s); err != nil {
+            panic(err)
+        }
+    }
 }

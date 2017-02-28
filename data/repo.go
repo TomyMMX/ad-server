@@ -2,19 +2,19 @@ package data
 
 import (
 	//"database/sql"
-	//"log"
+	"errors"
+    "strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-    "github.com/TomyMMX/ad-server/models"
 )
 
 func PrepareDbConnection() (*sqlx.DB, error) {
 	return sqlx.Open("mysql", "test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")
 }
 
-func GetAds(folderId int) (models.Ads, error) {
-	ads := models.Ads{}
+func GetAds(folderId int) (Ads, error) {
+	ads := Ads{}
 
 	db, err := PrepareDbConnection()
 
@@ -28,8 +28,8 @@ func GetAds(folderId int) (models.Ads, error) {
 	return ads, err
 }
 
-func GetFolders(parrentId int) (models.Folders, error) {
-	folders := models.Folders{}
+func GetFolders(parrentId int) (Folders, error) {
+	folders := Folders{}
 
 	db, err := PrepareDbConnection()
 
@@ -43,15 +43,27 @@ func GetFolders(parrentId int) (models.Folders, error) {
 	return folders, err
 }
 
-func AddFolder(f models.Folder, parrentId int) error {
+func AddFolder(f Folder, parrentId int) error {
 	db, err := PrepareDbConnection()
 
 	if err != nil {
 		return err
 	}
-
-	//get all ads in the desired folder
-	_, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", f.ParrentId, f.Name)
+    
+    if(f.Name == ""){
+        return errors.New("New folder name is empty.")
+    }
+    
+    folderCount := 0
+    err = db.Select(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", parrentId)
+    
+    if folderCount == 0{
+        return errors.New("Parrent folder with id " + strconv.Itoa(parrentId) + " does not exist.")
+    }
+    
+    //also checked that this way of composing the sql query is safe against SQL injection
+	//add this folder to the database
+	_, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", parrentId, f.Name)
 
 	return err
 }
