@@ -57,7 +57,6 @@ func OneAd(w http.ResponseWriter, r *http.Request) {
 	//here we are interested in the ad id
 	adId := vars["adId"]
 	fmt.Fprintln(w, "Requested ad ID:", adId)
-
 }
 
 func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +72,9 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	} else {
 		//here we are interested in the id of the parrent folder
 		parrentId, _ := strconv.Atoi(vars["parrentId"])
+
+		//if the Atoi function fails the parrentId will be 0
+		//and we will return folders at root
 
 		//get all folders in the specified parrent folder
 		folders, err = GetFolders(parrentId)
