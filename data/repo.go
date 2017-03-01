@@ -1,33 +1,33 @@
 package data
 
 import (
-	//"database/sql"
-	"errors"
+    //"database/sql"
+    "errors"
     "strconv"
 
     "github.com/asaskevich/govalidator"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
+    _ "github.com/go-sql-driver/mysql"
+    "github.com/jmoiron/sqlx"
 )
 
 func PrepareDbConnection() (*sqlx.DB, error) {
     //TODO: should move the conenction string to some type of config
-	return sqlx.Open("mysql", "test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")
+    return sqlx.Open("mysql", "test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")
 }
 
 func GetAds(folderId int) (Ads, error) {
-	ads := Ads{}
+    ads := Ads{}
 
-	db, err := PrepareDbConnection()
+    db, err := PrepareDbConnection()
 
-	if err != nil {
-		return ads, err
-	}
+    if err != nil {
+        return ads, err
+    }
 
-	//get all ads in the desired folder
-	err = db.Select(&ads, "SELECT * FROM ad WHERE folderid = ?", folderId)
+    //get all ads in the desired folder
+    err = db.Select(&ads, "SELECT * FROM ad WHERE folderid = ?", folderId)
 
-	return ads, err
+    return ads, err
 }
 
 func CheckAd(a Ad) error {
@@ -47,11 +47,11 @@ func CheckAd(a Ad) error {
 }
 
 func AddAd(a Ad) error {
-	db, err := PrepareDbConnection()
+    db, err := PrepareDbConnection()
 
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     
     if err=CheckAd(a); err != nil {
         return err;
@@ -65,61 +65,61 @@ func AddAd(a Ad) error {
     }
         
     //also checked that this way of composing the sql query is safe against SQL injection
-	//add this folder to the database
-	_, err = db.Query("INSERT INTO ad (folderid, name, url) VALUES (?, ?, ?)", a.FolderId, a.Name, a.Url)
+    //add this folder to the database
+    _, err = db.Query("INSERT INTO ad (folderid, name, url) VALUES (?, ?, ?)", a.FolderId, a.Name, a.Url)
 
-	return err
+    return err
 }
 
 func RemoveAd(adId int) error {
     db, err := PrepareDbConnection()
 
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     
     _, err = db.Query("DELETE FROM ad WHERE id=?", adId)
 
-	return err
+    return err
 }
 
 func UpdateAd(a Ad) error {
-	db, err := PrepareDbConnection()
+    db, err := PrepareDbConnection()
 
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     
     if err=CheckAd(a); err != nil {
         return err;
     }
 
-	_, err = db.Query("UPDATE ad SET name=?, url=? WHERE id=?", a.Name, a.Url, a.Id)
+    _, err = db.Query("UPDATE ad SET name=?, url=? WHERE id=?", a.Name, a.Url, a.Id)
 
-	return err
+    return err
 }
 
 func GetFolders(parrentId int) (Folders, error) {
-	folders := Folders{}
+    folders := Folders{}
 
-	db, err := PrepareDbConnection()
+    db, err := PrepareDbConnection()
 
-	if err != nil {
-		return folders, err
-	}
+    if err != nil {
+        return folders, err
+    }
 
-	//get all ads in the desired folder
-	err = db.Select(&folders, "SELECT * FROM folder WHERE parrentid = ?", parrentId)
+    //get all ads in the desired folder
+    err = db.Select(&folders, "SELECT * FROM folder WHERE parrentid = ?", parrentId)
 
-	return folders, err
+    return folders, err
 }
 
 func AddFolder(f Folder) error {
-	db, err := PrepareDbConnection()
+    db, err := PrepareDbConnection()
 
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     
     if f.Name == "" {
         return errors.New("New folder name is empty.")
@@ -136,18 +136,18 @@ func AddFolder(f Folder) error {
     }
     
     //also checked that this way of composing the sql query is safe against SQL injection
-	//add this folder to the database
-	_, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", f.ParrentId, f.Name)
+    //add this folder to the database
+    _, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", f.ParrentId, f.Name)
 
-	return err
+    return err
 }
 
 func RemoveFolder(folderId int) error {
     db, err := PrepareDbConnection()
 
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     
     folderCount := 1
     err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE parrentid = ?", folderId)
@@ -176,21 +176,21 @@ func RemoveFolder(folderId int) error {
     //commit the whole transaction
     err = tx.Commit()
 
-	return err
+    return err
 }
 
 func UpdateFolder(f Folder) error {
-	db, err := PrepareDbConnection()
+    db, err := PrepareDbConnection()
 
-	if err != nil {
-		return err
-	}
+    if err != nil {
+        return err
+    }
     
     if f.Name == "" {
         return errors.New("Folder name is empty.")
     }
 
-	_, err = db.Query("UPDATE folder SET name=? WHERE id=?", f.Name, f.Id)
+    _, err = db.Query("UPDATE folder SET name=? WHERE id=?", f.Name, f.Id)
 
-	return err
+    return err
 }

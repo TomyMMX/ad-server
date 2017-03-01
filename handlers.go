@@ -1,26 +1,26 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"strconv"
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "strconv"
     "io"
     "io/ioutil"
 
-	"github.com/gorilla/mux"
+    "github.com/gorilla/mux"
     "github.com/TomyMMX/ad-server/data"
 )
 
 type APIStatus struct {
-	Status  string  `json:"status"`
+    Status  string  `json:"status"`
     Code    string  `json:"code"`
     Reason  string  `json:"reason"`
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Ads REST API")
-	//TODO: serve the API documentation or something
+    fmt.Fprintln(w, "Ads REST API")
+    //TODO: serve the API documentation or something
 }
 
 func ReadRequestBody(r *http.Request) []byte {
@@ -57,15 +57,15 @@ func RequestToFolder(r *http.Request) (data.Folder, error) {
 }
 
 func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatus{
-	//since we know that we are returning JSON set the correct content type
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    //since we know that we are returning JSON set the correct content type
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
     
     var status APIStatus
     
-	//set the status code
-	if err != nil {
+    //set the status code
+    if err != nil {
         //TODO: set correct response status for different error types
-		w.WriteHeader(http.StatusBadRequest)
+        w.WriteHeader(http.StatusBadRequest)
         status = APIStatus{
             Status: "Error",
             Reason: err.Error(),
@@ -74,28 +74,28 @@ func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatu
         if err := json.NewEncoder(w).Encode(status); err != nil {
             panic(err)
         }
-	} else {
-		w.WriteHeader(okStatus)
+    } else {
+        w.WriteHeader(okStatus)
         status = APIStatus{
             Status: "OK",            
         }    
-	}
+    }
     
     return status
 }
 
 /*AD ENDPOINTS*/
 func AdsInFolder(w http.ResponseWriter, r *http.Request) {
-	//get the variables from the route
-	vars := mux.Vars(r)
+    //get the variables from the route
+    vars := mux.Vars(r)
 
-	//here we are interested in the folder id
-	folderId, _ := strconv.Atoi(vars["folderId"])
+    //here we are interested in the folder id
+    folderId, _ := strconv.Atoi(vars["folderId"])
 
-	//get all ads in the specified folder
-	ads, err := data.GetAds(folderId)
-	
-	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
+    //get all ads in the specified folder
+    ads, err := data.GetAds(folderId)
+    
+    if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(ads); err != nil {
             panic(err)
         }
@@ -103,11 +103,11 @@ func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 }
 
 func OneAd(w http.ResponseWriter, r *http.Request) {
-	//get the variables from the route
-	vars := mux.Vars(r)
-	//here we are interested in the ad id
-	adId := vars["adId"]
-	fmt.Fprintln(w, "Requested ad ID:", adId)
+    //get the variables from the route
+    vars := mux.Vars(r)
+    //here we are interested in the ad id
+    adId := vars["adId"]
+    fmt.Fprintln(w, "Requested ad ID:", adId)
     
     //TODO: implement return of one specific ad
 }
@@ -140,8 +140,8 @@ func AddAd(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveAd(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)	
-	adId, err := strconv.Atoi(vars["adId"])
+    vars := mux.Vars(r)    
+    adId, err := strconv.Atoi(vars["adId"])
     
     //parsing the adId was not successful
     if err != nil {
@@ -167,8 +167,8 @@ func UpdateAd(w http.ResponseWriter, r *http.Request) {
         return
     }
     
-    vars := mux.Vars(r)	
-	ad.Id, err = strconv.Atoi(vars["adId"])
+    vars := mux.Vars(r)    
+    ad.Id, err = strconv.Atoi(vars["adId"])
     
     //parsing the folderId was not successful
     if err != nil {
@@ -188,19 +188,19 @@ func UpdateAd(w http.ResponseWriter, r *http.Request) {
 
 /*FOLDER ENDPOINTS*/
 func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
-	//get the variables from the route
-	vars := mux.Vars(r)
+    //get the variables from the route
+    vars := mux.Vars(r)
 
-	//here we are interested in the id of the parrent folder
-	parrentId, _ := strconv.Atoi(vars["parrentId"])
+    //here we are interested in the id of the parrent folder
+    parrentId, _ := strconv.Atoi(vars["parrentId"])
 
-	//if the Atoi function fails the parrentId will be 0
-	//and we will return folders at root
+    //if the Atoi function fails the parrentId will be 0
+    //and we will return folders at root
 
-	//get all folders in the specified parrent folder
-	folders, err := data.GetFolders(parrentId)
-	
-	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
+    //get all folders in the specified parrent folder
+    folders, err := data.GetFolders(parrentId)
+    
+    if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(folders); err != nil {
             panic(err)
         }
@@ -208,10 +208,10 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 }
 func OneFolder(w http.ResponseWriter, r *http.Request) {
     //get the variables from the route
-	vars := mux.Vars(r)
-	//here we are interested in the ad id
-	folderId := vars["folderId"]
-	fmt.Fprintln(w, "Requested folder ID:", folderId)
+    vars := mux.Vars(r)
+    //here we are interested in the ad id
+    folderId := vars["folderId"]
+    fmt.Fprintln(w, "Requested folder ID:", folderId)
     
     //TODO: implement return of one specific folder
 }
@@ -224,7 +224,7 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
         return
     }
     
-    vars := mux.Vars(r)	   
+    vars := mux.Vars(r)       
     if vars["parrentId"] == "" {
         folder.ParrentId = 0
     } else {
@@ -248,8 +248,8 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
 }
 
 func RemoveFolder(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)	
-	folderId, err := strconv.Atoi(vars["folderId"])
+    vars := mux.Vars(r)    
+    folderId, err := strconv.Atoi(vars["folderId"])
     
     //parsing the folderId was not successful
     if err != nil {
@@ -275,8 +275,8 @@ func UpdateFolder(w http.ResponseWriter, r *http.Request) {
         return
     }
     
-    vars := mux.Vars(r)	
-	folder.Id, err = strconv.Atoi(vars["folderId"])
+    vars := mux.Vars(r)    
+    folder.Id, err = strconv.Atoi(vars["folderId"])
     
     //parsing the folderId was not successful
     if err != nil {
