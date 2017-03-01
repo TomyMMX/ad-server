@@ -30,7 +30,7 @@ func GetAds(folderId int) (Ads, error) {
 	return ads, err
 }
 
-func AddAd(a Ad, folderId int) error {
+func AddAd(a Ad) error {
 	db, err := PrepareDbConnection()
 
 	if err != nil {
@@ -50,15 +50,15 @@ func AddAd(a Ad, folderId int) error {
     }
         
     var folderCount int
-    err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", folderId)
+    err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", a.FolderId)
     
     if folderCount == 0{
-        return errors.New("Folder with id " + strconv.Itoa(folderId) + " does not exist.")
+        return errors.New("Folder with id " + strconv.Itoa(a.FolderId) + " does not exist.")
     }
         
     //also checked that this way of composing the sql query is safe against SQL injection
 	//add this folder to the database
-	_, err = db.Query("INSERT INTO ad (folderid, name, url) VALUES (?, ?, ?)", folderId, a.Name, a.Url)
+	_, err = db.Query("INSERT INTO ad (folderid, name, url) VALUES (?, ?, ?)", a.FolderId, a.Name, a.Url)
 
 	return err
 }
@@ -90,7 +90,7 @@ func GetFolders(parrentId int) (Folders, error) {
 	return folders, err
 }
 
-func AddFolder(f Folder, parrentId int) error {
+func AddFolder(f Folder) error {
 	db, err := PrepareDbConnection()
 
 	if err != nil {
@@ -102,18 +102,18 @@ func AddFolder(f Folder, parrentId int) error {
     }
     
     //if adding int a existing folder, check if it exists
-    if parrentId != 0 {
+    if f.ParrentId != 0 {
         folderCount := 0
-        err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", parrentId)
+        err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", f.ParrentId)
         
         if folderCount == 0{
-            return errors.New("Parrent folder with id " + strconv.Itoa(parrentId) + " does not exist.")
+            return errors.New("Parrent folder with id " + strconv.Itoa(f.ParrentId) + " does not exist.")
         }
     }
     
     //also checked that this way of composing the sql query is safe against SQL injection
 	//add this folder to the database
-	_, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", parrentId, f.Name)
+	_, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", f.ParrentId, f.Name)
 
 	return err
 }

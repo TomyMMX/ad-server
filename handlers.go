@@ -100,23 +100,26 @@ func OneAd(w http.ResponseWriter, r *http.Request) {
     //TODO: implement return of one specific ad
 }
 
-func AddAd(w http.ResponseWriter, r *http.Request) {
+func RequestToAd (r *http.Request) (data.Ad, error) {
     var ad data.Ad
-    
-    //get the variables from the route
-	vars := mux.Vars(r)
     
     body := ReadRequestBody(r)
     //unmarshal into our Folder struct
     err := json.Unmarshal(body, &ad)
+    
+    return ad, err
+}
+
+func AddAd(w http.ResponseWriter, r *http.Request) {
+    ad, err := RequestToAd(r)
         
     if err != nil {
         PrepareAPIResponse(w, err, 0)
         return
     }
         
-    var folderId int
-    folderId, err = strconv.Atoi(vars["folderId"])
+    vars := mux.Vars(r)
+    ad.FolderId, err = strconv.Atoi(vars["folderId"])
     
     //parsing the folderId was not successful
     if err != nil {
@@ -124,7 +127,7 @@ func AddAd(w http.ResponseWriter, r *http.Request) {
         return
     }
         
-    err = data.AddAd(ad, folderId)
+    err = data.AddAd(ad)
     
     if s := PrepareAPIResponse(w, err, http.StatusCreated); s.Status == "OK" {
         s.Reason = "Successfully added new ad in folder: " + vars["folderId"]
@@ -192,26 +195,29 @@ func OneFolder(w http.ResponseWriter, r *http.Request) {
     //TODO: implement return of one specific folder
 }
 
-func AddFolder(w http.ResponseWriter, r *http.Request) {
+func RequestToFolder(r *http.Request) (data.Folder, error) {
     var folder data.Folder
-    
-    //get the variables from the route
-	vars := mux.Vars(r)
-    
+   
     body := ReadRequestBody(r)
     //unmarshal into our Folder struct
     err := json.Unmarshal(body, &folder)
+    
+    return folder, err;
+}
+
+func AddFolder(w http.ResponseWriter, r *http.Request) {
+    folder, err := RequestToFolder(r)
         
     if err != nil {
         PrepareAPIResponse(w, err, 0)
         return
     }
     
-    var parrentId int
+    vars := mux.Vars(r)	   
     if vars["parrentId"] == "" {
-        parrentId = 0
+        folder.ParrentId = 0
     } else {
-        parrentId, err = strconv.Atoi(vars["parrentId"])
+        folder.ParrentId, err = strconv.Atoi(vars["parrentId"])
     }
     
     //parsing the parrentId was not successful
@@ -220,7 +226,7 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
         return
     }
         
-    err = data.AddFolder(folder, parrentId)
+    err = data.AddFolder(folder)
     
     if s := PrepareAPIResponse(w, err, http.StatusCreated); s.Status == "OK" {
         s.Reason = "Successfully added new folder in parrent: " + vars["parrentId"]

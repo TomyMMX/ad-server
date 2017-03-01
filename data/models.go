@@ -5,8 +5,8 @@ import (
 )
 
 type Folder struct {
-	Id           uint32    `json:"id"`
-	ParrentId    uint32    `json:"parrentid"` //if 0 then this folder is at the root level
+	Id           int    `json:"id"`
+	ParrentId    int    `json:"parrentid"` //if 0 then this folder is at the root level
 	Name         string    `json:"name"`
 	LastModified time.Time `json:"lastmodified"`
 }
@@ -14,8 +14,8 @@ type Folder struct {
 type Folders []Folder
 
 type Ad struct {
-	Id           uint32    `json:"id"`
-	FolderId     uint32    `json:"folderid"`
+	Id           int    `json:"id"`
+	FolderId     int    `json:"folderid"`
 	Name         string    `json:"name"`
 	Url          string    `json:"url"`
 	LastModified time.Time `json:"lastmodified"`
