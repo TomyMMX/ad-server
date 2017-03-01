@@ -39,6 +39,12 @@ var routes = router.Routes{
 		"/api/ads/{adId}",
 		RemoveAd,
 	},
+    router.Route{
+		"UpdateAd",
+		"PUT",
+		"/api/ads/{adId}",
+		UpdateAd,
+	},
 	router.Route{
 		"OneAd",
 		"GET",

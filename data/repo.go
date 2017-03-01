@@ -30,6 +30,22 @@ func GetAds(folderId int) (Ads, error) {
 	return ads, err
 }
 
+func CheckAd(a Ad) error {
+    if a.Name == "" {
+        return errors.New("Ad name is empty.")
+    }
+    
+    if a.Url == "" {
+        return errors.New("Ad URL is empty.")
+    }
+    
+    if !govalidator.IsURL(a.Url) {
+        return errors.New("Ad URL is invalid.")
+    }
+    
+    return nil
+}
+
 func AddAd(a Ad) error {
 	db, err := PrepareDbConnection()
 
@@ -37,16 +53,8 @@ func AddAd(a Ad) error {
 		return err
 	}
     
-    if a.Name == "" {
-        return errors.New("New ad name is empty.")
-    }
-    
-    if a.Url == "" {
-        return errors.New("New ad URL is empty.")
-    }
-    
-    if !govalidator.IsURL(a.Url) {
-        return errors.New("New ad URL is invalid.")
+    if err=CheckAd(a); err != nil {
+        return err;
     }
         
     var folderCount int
@@ -71,6 +79,22 @@ func RemoveAd(adId int) error {
 	}
     
     _, err = db.Query("DELETE FROM ad WHERE id=?", adId)
+
+	return err
+}
+
+func UpdateAd(a Ad) error {
+	db, err := PrepareDbConnection()
+
+	if err != nil {
+		return err
+	}
+    
+    if err=CheckAd(a); err != nil {
+        return err;
+    }
+
+	_, err = db.Query("UPDATE ad SET name=?, url=? WHERE id=?", a.Name, a.Url, a.Id)
 
 	return err
 }
