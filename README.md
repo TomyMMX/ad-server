@@ -57,7 +57,7 @@ POST /api/folders/parent/1 HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 {
-    "name": "New folder"
+  "name": "New folder"
 }
 ```
 
@@ -68,8 +68,8 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:04:11 GMT
 Content-Length: 81
 {
-"status": "OK",
-"reason": "Successfully added new folder in parent: 1"
+  "status": "OK",
+  "reason": "Successfully added new folder in parent: 1"
 }
 ```
 
@@ -82,7 +82,7 @@ PUT /api/folders/1 HTTP/1.1
 Accept: application/json
 Content-Type: application/json
 {
-    "name": "Updated folder name"
+  "name": "Updated folder name"
 }
 ```
 
@@ -93,8 +93,8 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:08:30 GMT
 Content-Length: 77
 {
-"status": "OK",
-"reason": "Successfully updated folder with id: 1"
+  "status": "OK",
+  "reason": "Successfully updated folder with id: 1"
 }
 ```
 
@@ -114,8 +114,8 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:08:30 GMT
 Content-Length: 77
 {
-"status": "OK",
-"reason": "Successfully removed folder with id: 1"
+  "status": "OK",
+  "reason": "Successfully removed folder with id: 1"
 }
 ```
 If folder has at least one subfolder the DELETE action will fail.
@@ -125,8 +125,8 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:11:03 GMT
 Content-Length: 107
 {
-"status": "Error",
-"reason": "This folder contains at least one other folder. Delete that first."
+  "status": "Error",
+  "reason": "This folder contains at least one other folder. Delete that first."
 }
 ```
 
@@ -179,8 +179,8 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:20:45 GMT
 Content-Length: 77
 {
-"status": "OK",
-"reason": "Successfully added new ad in folder: 1"
+  "status": "OK",
+  "reason": "Successfully added new ad in folder: 1"
 }
 ```
 
