@@ -14,6 +14,16 @@ For most things the standard libraries are used the few exceptions are:
 
 The database used is MySQL. No special reason for that... could have been any relational database. Actually changing the database would not require much work.
 
+##Project organization  
+The main package is divided into two .go files. main.go and hanlders.go. This code provides tha backbone of the API server with all the necesery routes and hanlder functions to handle specific routes.  
+Other parts of the application are divided into 3 additional packages where the data package is the most important one. It contains code for our data models and code that communicates with the database.  
+The database schema for the rather simple two table database can be found in [DB/dbschema.sql](https://github.com/TomyMMX/ad-server/blob/master/DB/dbschema.sql).  
+
+###Testing
+The only tests I could think of are at the model/data layer. Where tests check if the functions that check the validity of our Ad or Folder objects work for different edge type inputs.  
+The other thing here that should be tested are the functions that work with the database. So basicaly to check if adding, retreaving, updating and deleting works.  
+My proficiency in Go is at this point a bit limited so I have no idea how to test the handler functions that work on the http request and respond to it. 
+
 ## API Reference
 
 **Working with ad folders**  
