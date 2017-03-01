@@ -15,11 +15,13 @@ For most things the standard libraries are used the few exceptions are:
 The database used is MySQL. No special reason for that... could have been any relational database. Actually changing the database would not require much work.
 
 ## API Reference
+
 **Working with ad folders**  
-*GET /api/folders*  
+
+***GET** /api/folders*  
 Get a list of all folders at root level.
 
-*GET /api/folders/parent/{parentId}*  
+***GET** /api/folders/parent/{parentId}*  
 Get a list of all folders inside the folder with the id {parentId}.
 
 **Request:**
@@ -43,10 +45,10 @@ Content-Length: 79
 ]
 ```
 
-*POST /api/folders*  
+***POST** /api/folders*  
 Add a folder at root level.
 
-*POST /api/folders/parent/{parentId}*  
+***POST** /api/folders/parent/{parentId}*  
 Add a folder inside the fodler with id {parentId}.
 
 **Request:**
@@ -71,7 +73,7 @@ Content-Length: 81
 }
 ```
 
-*PUT /api/folders/{folderId}*  
+***PUT** /api/folders/{folderId}*  
 Update the folder with id {folderId}.
 
 **Request:**
@@ -96,7 +98,7 @@ Content-Length: 77
 }
 ```
 
-*DELETE /api/folders/{folderId}*  
+***DELETE** /api/folders/{folderId}*  
 Remove the folder with id {folderId}.
 
 **Request:**
@@ -118,7 +120,7 @@ Content-Length: 77
 ```
 If folder has at least one subfolder the DELETE action will fail.
 ```JSON
-HTTP/1.1 200 OK
+HTTP/1.1 400 Bad Request
 Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:11:03 GMT
 Content-Length: 107
@@ -129,3 +131,102 @@ Content-Length: 107
 ```
 
 **Working with ads**  
+
+***GET** /api/ads/folder/{folderId}*  
+Get a list of all ads inside the folder with the id {folderId}.
+
+**Request:**
+```JSON
+GET /api/ads/folder/1 HTTP/1.1
+Accept: application/json
+```
+**Response:**
+```JSON
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:17:27 GMT
+Content-Length: 145
+[
+  {
+  "id": 10,
+  "folderid": 1,
+  "name": "Ace of hearts",
+  "url": "http://cliparts.co/cliparts/8c6/oga/8c6ogaBoi.png",
+  "lastmodified": "2017-03-01T01:42:50Z"
+  }
+]
+```
+
+***POST** /api/ads/folder/{folderId}*  
+Add a ad inside the fodler with id {folderId}.
+
+**Request:**
+```JSON
+POST /api/ads/folder/1 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+{
+  "name": "New cool ad",
+  "url": "http://www.hdbloggers.net/wp-content/uploads/2016/04/Cool-Wallpapers.jpg"
+}
+```
+URLs get tested for validity. URLs that are not URLs will not be accepted.
+
+**Response:**
+```JSON
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:20:45 GMT
+Content-Length: 77
+{
+"status": "OK",
+"reason": "Successfully added new ad in folder: 1"
+}
+```
+
+***PUT** /api/ads/{adId}*  
+Update the ad with id {adId}.
+
+**Request:**
+```JSON
+PUT /api/ads/1 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+{
+  "name": "New cool ad - UPDATE",
+  "url": "this is not an URL"
+}
+```
+
+**Response:**
+```JSON
+HTTP/1.1 400 Bad Request
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:25:17 GMT
+Content-Length: 59
+{
+"status": "Error",
+"reason": "Ad URL is invalid."
+}
+```
+
+***DELETE** /api/ads/{adId}*  
+Remove the ad with id {adId}.
+
+**Request:**
+```JSON
+DELETE /api/ads/1 HTTP/1.1
+Accept: application/json
+```
+
+**Response:**
+```JSON
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:26:44 GMT
+Content-Length: 73
+{
+"status": "OK"
+"reason": "Successfully removed ad with id: 1"
+}
+```
