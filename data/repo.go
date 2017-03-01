@@ -106,7 +106,7 @@ func UpdateAd(a Ad) error {
     return err
 }
 
-func GetFolders(parrentId int) (Folders, error) {
+func GetFolders(parentId int) (Folders, error) {
     folders := Folders{}
 
     db, err := PrepareDbConnection()
@@ -116,7 +116,7 @@ func GetFolders(parrentId int) (Folders, error) {
     }
 
     //get all ads in the desired folder
-    err = db.Select(&folders, "SELECT * FROM folder WHERE parrentid = ?", parrentId)
+    err = db.Select(&folders, "SELECT * FROM folder WHERE parentid = ?", parentId)
 
     return folders, err
 }
@@ -133,18 +133,18 @@ func AddFolder(f Folder) error {
     }
     
     //if adding int a existing folder, check if it exists
-    if f.ParrentId != 0 {
+    if f.ParentId != 0 {
         folderCount := 0
-        err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", f.ParrentId)
+        err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE id = ?", f.ParentId)
         
         if folderCount == 0{
-            return errors.New("Parrent folder with id " + strconv.Itoa(f.ParrentId) + " does not exist.")
+            return errors.New("Parent folder with id " + strconv.Itoa(f.ParentId) + " does not exist.")
         }
     }
     
     //also checked that this way of composing the sql query is safe against SQL injection
     //add this folder to the database
-    _, err = db.Query("INSERT INTO folder (parrentid, name) VALUES (?, ?)", f.ParrentId, f.Name)
+    _, err = db.Query("INSERT INTO folder (parentid, name) VALUES (?, ?)", f.ParentId, f.Name)
 
     return err
 }
@@ -157,7 +157,7 @@ func RemoveFolder(folderId int) error {
     }
     
     folderCount := 1
-    err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE parrentid = ?", folderId)
+    err = db.Get(&folderCount, "SELECT count(*) FROM folder WHERE parentid = ?", folderId)
         
     if folderCount != 0{
         return errors.New("This folder contains at least one other folder. Delete that first.")

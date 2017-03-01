@@ -67,13 +67,13 @@ var routes = router.Routes{
     router.Route{
         "FoldersInFolder",
         "GET",
-        "/api/folders/parrent/{parrentId}",
+        "/api/folders/parent/{parentId}",
         FoldersInFolder,
     },
     router.Route{
         "AddFolderInFolder",
         "POST",
-        "/api/folders/parrent/{parrentId}",
+        "/api/folders/parent/{parentId}",
         AddFolder,
     },
     router.Route{

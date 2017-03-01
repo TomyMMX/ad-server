@@ -6,7 +6,7 @@ import (
 
 type Folder struct {
     Id           int    `json:"id"`
-    ParrentId    int    `json:"parrentid"` //if 0 then this folder is at the root level
+    ParentId    int    `json:"parentid"` //if 0 then this folder is at the root level
     Name         string    `json:"name"`
     LastModified time.Time `json:"lastmodified"`
 }

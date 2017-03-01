@@ -193,14 +193,14 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
     //get the variables from the route
     vars := mux.Vars(r)
 
-    //here we are interested in the id of the parrent folder
-    parrentId, _ := strconv.Atoi(vars["parrentId"])
+    //here we are interested in the id of the parent folder
+    parentId, _ := strconv.Atoi(vars["parentId"])
 
-    //if the Atoi function fails the parrentId will be 0
+    //if the Atoi function fails the parentId will be 0
     //and we will return folders at root
 
-    //get all folders in the specified parrent folder
-    folders, err := data.GetFolders(parrentId)
+    //get all folders in the specified parent folder
+    folders, err := data.GetFolders(parentId)
     
     if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(folders); err != nil {
@@ -227,13 +227,13 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
     }
     
     vars := mux.Vars(r)       
-    if vars["parrentId"] == "" {
-        folder.ParrentId = 0
+    if vars["parentId"] == "" {
+        folder.ParentId = 0
     } else {
-        folder.ParrentId, err = strconv.Atoi(vars["parrentId"])
+        folder.ParentId, err = strconv.Atoi(vars["parentId"])
     }
     
-    //parsing the parrentId was not successful
+    //parsing the parentId was not successful
     if err != nil {
         PrepareAPIResponse(w, err, 0)
         return
@@ -242,7 +242,7 @@ func AddFolder(w http.ResponseWriter, r *http.Request) {
     err = data.AddFolder(folder)
     
     if s := PrepareAPIResponse(w, err, http.StatusCreated); s.Status == "OK" {
-        s.Reason = "Successfully added new folder in parrent: " + vars["parrentId"]
+        s.Reason = "Successfully added new folder in parent: " + vars["parentId"]
         if err := json.NewEncoder(w).Encode(s); err != nil {
             panic(err)
         }
