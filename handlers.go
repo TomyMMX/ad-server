@@ -239,3 +239,30 @@ func RemoveFolder(w http.ResponseWriter, r *http.Request) {
         }
     }
 }
+
+func UpdateFolder(w http.ResponseWriter, r *http.Request) {
+    folder, err := RequestToFolder(r)
+    
+    if err != nil {
+        PrepareAPIResponse(w, err, 0)
+        return
+    }
+    
+    vars := mux.Vars(r)	
+	folder.Id, err = strconv.Atoi(vars["folderId"])
+    
+    //parsing the folderId was not successful
+    if err != nil {
+        PrepareAPIResponse(w, err, 0)
+        return
+    }
+    
+    err = data.UpdateFolder(folder)
+    
+    if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
+        s.Reason = "Successfully updated folder with id: " + vars["folderId"]
+        if err := json.NewEncoder(w).Encode(s); err != nil {
+            panic(err)
+        }
+    }
+}

@@ -75,6 +75,12 @@ var routes = router.Routes{
 		"/api/folders/{folderId}",
 		RemoveFolder,
 	},
+    router.Route{
+		"UpdateFolder",
+		"PUT",
+		"/api/folders/{folderId}",
+		UpdateFolder,
+	},
 	router.Route{
 		"OneFodler",
 		"GET",

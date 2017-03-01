@@ -154,3 +154,19 @@ func RemoveFolder(folderId int) error {
 
 	return err
 }
+
+func UpdateFolder(f Folder) error {
+	db, err := PrepareDbConnection()
+
+	if err != nil {
+		return err
+	}
+    
+    if f.Name == "" {
+        return errors.New("Folder name is empty.")
+    }
+
+	_, err = db.Query("UPDATE folder SET name=? WHERE id=?", f.Name, f.Id)
+
+	return err
+}
