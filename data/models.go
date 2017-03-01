@@ -2,6 +2,9 @@ package data
 
 import (
     "time"
+	"errors"
+	
+	"github.com/asaskevich/govalidator"
 )
 
 type Folder struct {
@@ -13,6 +16,14 @@ type Folder struct {
 
 type Folders []Folder
 
+func (f Folder) Check() error {
+	if f.Name == "" {
+        return errors.New("Folder name is empty.")
+    }
+    
+    return nil
+}
+
 type Ad struct {
     Id           int    `json:"id"`
     FolderId     int    `json:"folderid"`
@@ -22,3 +33,19 @@ type Ad struct {
 }
 
 type Ads []Ad
+
+func (a Ad) Check() error {
+    if a.Name == "" {
+        return errors.New("Ad name is empty.")
+    }
+    
+    if a.Url == "" {
+        return errors.New("Ad URL is empty.")
+    }
+    
+    if !govalidator.IsURL(a.Url) {
+        return errors.New("Ad URL is invalid.")
+    }
+    
+    return nil
+}

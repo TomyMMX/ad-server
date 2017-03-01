@@ -41,7 +41,7 @@ func RequestToAd (r *http.Request) (data.Ad, error) {
     var ad data.Ad
     
     body := ReadRequestBody(r)
-    //unmarshal into our Folder struct
+    //unmarshal into our Ad struct
     err := json.Unmarshal(body, &ad)
     
     return ad, err

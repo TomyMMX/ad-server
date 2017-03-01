@@ -4,8 +4,7 @@ import (
     //"database/sql"
     "errors"
     "strconv"
-
-    "github.com/asaskevich/govalidator"
+    
     _ "github.com/go-sql-driver/mysql"
     "github.com/jmoiron/sqlx"
 )
@@ -18,23 +17,6 @@ func SetConnectionString(s string){
 
 func PrepareDbConnection() (*sqlx.DB, error) {
     return sqlx.Open("mysql", connectionString)
-}
-
-/*HELPER FUNCTIONS*/
-func CheckAd(a Ad) error {
-    if a.Name == "" {
-        return errors.New("Ad name is empty.")
-    }
-    
-    if a.Url == "" {
-        return errors.New("Ad URL is empty.")
-    }
-    
-    if !govalidator.IsURL(a.Url) {
-        return errors.New("Ad URL is invalid.")
-    }
-    
-    return nil
 }
 
 /*DB ACCESS FUNCTIONS*/
@@ -60,7 +42,7 @@ func AddAd(a Ad) error {
         return err
     }
     
-    if err=CheckAd(a); err != nil {
+    if err=a.Check(); err != nil {
         return err;
     }
         
@@ -97,7 +79,7 @@ func UpdateAd(a Ad) error {
         return err
     }
     
-    if err=CheckAd(a); err != nil {
+    if err=a.Check(); err != nil {
         return err;
     }
 
@@ -128,8 +110,8 @@ func AddFolder(f Folder) error {
         return err
     }
     
-    if f.Name == "" {
-        return errors.New("New folder name is empty.")
+    if err=f.Check(); err != nil {
+        return err;
     }
     
     //if adding int a existing folder, check if it exists
@@ -193,8 +175,8 @@ func UpdateFolder(f Folder) error {
         return err
     }
     
-    if f.Name == "" {
-        return errors.New("Folder name is empty.")
+    if err=f.Check(); err != nil {
+        return err;
     }
 
     _, err = db.Query("UPDATE folder SET name=? WHERE id=?", f.Name, f.Id)
