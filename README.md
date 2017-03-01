@@ -15,11 +15,11 @@ For most things the standard libraries are used the few exceptions are:
 The database used is MySQL. No special reason for that... could have been any relational database. Actually changing the database would not require much work.
 
 ## API Reference
-
-*GET /api/folders*
+**Working with ad folders**  
+*GET /api/folders*  
 Get a list of all folders at root level.
 
-*GET /api/folders/parent/{parentId}*
+*GET /api/folders/parent/{parentId}*  
 Get a list of all folders inside the folder with the id {parentId}.
 
 **Request:**
@@ -37,20 +37,95 @@ Content-Length: 79
 {
   "id":2,
   "parentid":1,
-  "name":"Blood",
+  "name":"Subfolder",
   "lastmodified":"2017-03-01T00:39:08Z"
 }
 ]
 ```
 
+*POST /api/folders*  
+Add a folder at root level.
 
+*POST /api/folders/parent/{parentId}*  
+Add a folder inside the fodler with id {parentId}.
 
 **Request:**
 ```JSON
-
+POST /api/folders/parent/1 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+{
+    "name": "New folder"
+}
 ```
 
 **Response:**
 ```JSON
-
+HTTP/1.1 201 Created
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:04:11 GMT
+Content-Length: 81
+{
+"status": "OK",
+"reason": "Successfully added new folder in parent: 1"
+}
 ```
+
+*PUT /api/folders/{folderId}*  
+Update the folder with id {folderId}.
+
+**Request:**
+```JSON
+PUT /api/folders/1 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+{
+    "name": "Updated folder name"
+}
+```
+
+**Response:**
+```JSON
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:08:30 GMT
+Content-Length: 77
+{
+"status": "OK",
+"reason": "Successfully updated folder with id: 1"
+}
+```
+
+*DELETE /api/folders/{folderId}*  
+Remove the folder with id {folderId}.
+
+**Request:**
+```JSON
+DELETE /api/folders/1 HTTP/1.1
+Accept: application/json
+```
+
+**Response:**
+```JSON
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:08:30 GMT
+Content-Length: 77
+{
+"status": "OK",
+"reason": "Successfully removed folder with id: 1"
+}
+```
+If folder has at least one subfolder the DELETE action will fail.
+```JSON
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 01 Mar 2017 13:11:03 GMT
+Content-Length: 107
+{
+"status": "Error",
+"reason": "This folder contains at least one other folder. Delete that first."
+}
+```
+
+**Working with ads**  
