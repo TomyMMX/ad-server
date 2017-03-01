@@ -36,6 +36,26 @@ func ReadRequestBody(r *http.Request) []byte {
     return body;
 }
 
+func RequestToAd (r *http.Request) (data.Ad, error) {
+    var ad data.Ad
+    
+    body := ReadRequestBody(r)
+    //unmarshal into our Folder struct
+    err := json.Unmarshal(body, &ad)
+    
+    return ad, err
+}
+
+func RequestToFolder(r *http.Request) (data.Folder, error) {
+    var folder data.Folder
+   
+    body := ReadRequestBody(r)
+    //unmarshal into our Folder struct
+    err := json.Unmarshal(body, &folder)
+    
+    return folder, err;
+}
+
 func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatus{
 	//since we know that we are returning JSON set the correct content type
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -69,20 +89,12 @@ func AdsInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
 
-	var ads []data.Ad
-	var err error
+	//here we are interested in the folder id
+	folderId, _ := strconv.Atoi(vars["folderId"])
 
-	if vars["folderId"] == "" {
-		//get all ads at the root of the folder structure
-		ads, err = data.GetAds(0)
-	} else {
-		//here we are interested in the folder id
-		folderId, _ := strconv.Atoi(vars["folderId"])
-
-		//get all ads in the specified folder
-		ads, err = data.GetAds(folderId)
-	}
-
+	//get all ads in the specified folder
+	ads, err := data.GetAds(folderId)
+	
 	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(ads); err != nil {
             panic(err)
@@ -98,16 +110,6 @@ func OneAd(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Requested ad ID:", adId)
     
     //TODO: implement return of one specific ad
-}
-
-func RequestToAd (r *http.Request) (data.Ad, error) {
-    var ad data.Ad
-    
-    body := ReadRequestBody(r)
-    //unmarshal into our Folder struct
-    err := json.Unmarshal(body, &ad)
-    
-    return ad, err
 }
 
 func AddAd(w http.ResponseWriter, r *http.Request) {
@@ -162,23 +164,15 @@ func FoldersInFolder(w http.ResponseWriter, r *http.Request) {
 	//get the variables from the route
 	vars := mux.Vars(r)
 
-	var folders []data.Folder
-	var err error
+	//here we are interested in the id of the parrent folder
+	parrentId, _ := strconv.Atoi(vars["parrentId"])
 
-	if vars["parrentId"] == "" {
-		//get all folders at the root of the folder structure
-		folders, err = data.GetFolders(0)
-	} else {
-		//here we are interested in the id of the parrent folder
-		parrentId, _ := strconv.Atoi(vars["parrentId"])
+	//if the Atoi function fails the parrentId will be 0
+	//and we will return folders at root
 
-		//if the Atoi function fails the parrentId will be 0
-		//and we will return folders at root
-
-		//get all folders in the specified parrent folder
-		folders, err = data.GetFolders(parrentId)
-	}
-
+	//get all folders in the specified parrent folder
+	folders, err := data.GetFolders(parrentId)
+	
 	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
         if err := json.NewEncoder(w).Encode(folders); err != nil {
             panic(err)
@@ -193,16 +187,6 @@ func OneFolder(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Requested folder ID:", folderId)
     
     //TODO: implement return of one specific folder
-}
-
-func RequestToFolder(r *http.Request) (data.Folder, error) {
-    var folder data.Folder
-   
-    body := ReadRequestBody(r)
-    //unmarshal into our Folder struct
-    err := json.Unmarshal(body, &folder)
-    
-    return folder, err;
 }
 
 func AddFolder(w http.ResponseWriter, r *http.Request) {
