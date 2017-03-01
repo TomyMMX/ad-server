@@ -2,7 +2,7 @@ CREATE DATABASE `addb`;
 
 CREATE TABLE `folder` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `parrentid` int(11) NOT NULL DEFAULT '0',
+  `parentid` int(11) NOT NULL DEFAULT '0',
   `name` varchar(255) NOT NULL,
   `lastmodified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
