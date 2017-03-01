@@ -5,6 +5,7 @@ import (
     "net/http"
 
     "github.com/TomyMMX/ad-server/router"
+	"github.com/TomyMMX/ad-server/data"
 )
 
 //the routes for this API server
@@ -97,6 +98,7 @@ var routes = router.Routes{
 
 //basic web server that handles API requests on our ad server
 func main() {
+	data.SetConnectionString("test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")	
 
     r := router.NewRouter(routes)
 

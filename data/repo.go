@@ -10,26 +10,17 @@ import (
     "github.com/jmoiron/sqlx"
 )
 
+var connectionString string
+
+func SetConnectionString(s string){
+	connectionString = s
+}
+
 func PrepareDbConnection() (*sqlx.DB, error) {
-    //TODO: should move the conenction string to some type of config
-    return sqlx.Open("mysql", "test:testpass@tcp(127.0.0.1:3306)/addb?parseTime=true")
+    return sqlx.Open("mysql", connectionString)
 }
 
-func GetAds(folderId int) (Ads, error) {
-    ads := Ads{}
-
-    db, err := PrepareDbConnection()
-
-    if err != nil {
-        return ads, err
-    }
-
-    //get all ads in the desired folder
-    err = db.Select(&ads, "SELECT * FROM ad WHERE folderid = ?", folderId)
-
-    return ads, err
-}
-
+/*HELPER FUNCTIONS*/
 func CheckAd(a Ad) error {
     if a.Name == "" {
         return errors.New("Ad name is empty.")
@@ -44,6 +35,22 @@ func CheckAd(a Ad) error {
     }
     
     return nil
+}
+
+/*DB ACCESS FUNCTIONS*/
+func GetAds(folderId int) (Ads, error) {
+    ads := Ads{}
+
+    db, err := PrepareDbConnection()
+
+    if err != nil {
+        return ads, err
+    }
+
+    //get all ads in the desired folder
+    err = db.Select(&ads, "SELECT * FROM ad WHERE folderid = ?", folderId)
+
+    return ads, err
 }
 
 func AddAd(a Ad) error {

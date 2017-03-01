@@ -23,6 +23,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
     //TODO: serve the API documentation or something
 }
 
+/*HELPER FUNCTIONS*/
 func ReadRequestBody(r *http.Request) []byte {
     //limit reader so users can't flood us with large amounts of data
     body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
@@ -70,7 +71,8 @@ func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatu
             Status: "Error",
             Reason: err.Error(),
         }    
-
+		
+		//in case of an error respond with the status JSON
         if err := json.NewEncoder(w).Encode(status); err != nil {
             panic(err)
         }
