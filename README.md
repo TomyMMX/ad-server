@@ -18,10 +18,10 @@ The database used is MySQL. No special reason for that... could have been any re
 
 **Working with ad folders**  
 
-***GET** /api/folders*  
+**GET** */api/folders*  
 Get a list of all folders at root level.
 
-***GET** /api/folders/parent/{parentId}*  
+**GET** */api/folders/parent/{parentId}*  
 Get a list of all folders inside the folder with the id {parentId}.
 
 **Request:**
@@ -45,10 +45,10 @@ Content-Length: 79
 ]
 ```
 
-***POST** /api/folders*  
+**POST** */api/folders*  
 Add a folder at root level.
 
-***POST** /api/folders/parent/{parentId}*  
+**POST** */api/folders/parent/{parentId}*  
 Add a folder inside the fodler with id {parentId}.
 
 **Request:**
@@ -73,7 +73,7 @@ Content-Length: 81
 }
 ```
 
-***PUT** /api/folders/{folderId}*  
+**PUT** */api/folders/{folderId}*  
 Update the folder with id {folderId}.
 
 **Request:**
@@ -98,7 +98,7 @@ Content-Length: 77
 }
 ```
 
-***DELETE** /api/folders/{folderId}*  
+**DELETE** */api/folders/{folderId}*  
 Remove the folder with id {folderId}.
 
 **Request:**
@@ -132,7 +132,7 @@ Content-Length: 107
 
 **Working with ads**  
 
-***GET** /api/ads/folder/{folderId}*  
+**GET** */api/ads/folder/{folderId}*  
 Get a list of all ads inside the folder with the id {folderId}.
 
 **Request:**
@@ -157,7 +157,7 @@ Content-Length: 145
 ]
 ```
 
-***POST** /api/ads/folder/{folderId}*  
+**POST** */api/ads/folder/{folderId}*  
 Add a ad inside the fodler with id {folderId}.
 
 **Request:**
@@ -184,7 +184,7 @@ Content-Length: 77
 }
 ```
 
-***PUT** /api/ads/{adId}*  
+**PUT** */api/ads/{adId}*  
 Update the ad with id {adId}.
 
 **Request:**
@@ -205,12 +205,12 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:25:17 GMT
 Content-Length: 59
 {
-"status": "Error",
-"reason": "Ad URL is invalid."
+  "status": "Error",
+  "reason": "Ad URL is invalid."
 }
 ```
 
-***DELETE** /api/ads/{adId}*  
+**DELETE** */api/ads/{adId}*  
 Remove the ad with id {adId}.
 
 **Request:**
@@ -226,7 +226,7 @@ Content-Type: application/json; charset=UTF-8
 Date: Wed, 01 Mar 2017 13:26:44 GMT
 Content-Length: 73
 {
-"status": "OK"
-"reason": "Successfully removed ad with id: 1"
+  "status": "OK"
+  "reason": "Successfully removed ad with id: 1"
 }
 ```
