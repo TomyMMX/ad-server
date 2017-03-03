@@ -55,6 +55,36 @@ Content-Length: 79
 ]
 ```
 
+**GET** */api/folders/{folderId}/path*  
+Gets all folders in the path from root to (and including) the folder with id {folderId}.
+
+**Request:**
+```JSON
+GET /api/folders/25/path HTTP/1.1
+Accept: application/json
+```
+**Response:**
+```JSON
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Fri, 03 Mar 2017 17:09:53 GMT
+Content-Length: 157
+[
+{
+	"id": 17,
+	"parentid": 0,
+	"name": "Club",
+	"lastmodified": "2017-03-01T14:08:30Z"
+},
+{
+	"id": 25,
+	"parentid": 17,
+	"name": "Peasants",
+	"lastmodified": "2017-03-03T14:03:40Z"
+}
+],
+```
+
 **POST** */api/folders*  
 Add a folder at root level.
 
