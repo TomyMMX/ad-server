@@ -219,6 +219,41 @@ func OneFolder(w http.ResponseWriter, r *http.Request) {
     //TODO: implement return of one specific folder
 }
 
+func GetFolderPath(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)    
+    folderId, err := strconv.Atoi(vars["folderId"])
+	
+	if err != nil {
+        PrepareAPIResponse(w, err, 0)
+        return
+    }
+	
+	var folders data.Folders
+	
+	for folderId > 0 {
+		var f data.Folder
+		f, err = data.GetFolder(folderId)
+		if err != nil {
+			break
+		}
+		
+		folderId = f.ParentId
+		
+		folders = append(folders, f)
+	}
+	
+	//reverse the array
+	for i, j := 0, len(folders)-1; i < j; i, j = i+1, j-1 {
+		folders[i], folders[j] = folders[j], folders[i]
+	}
+	
+	if s := PrepareAPIResponse(w, err, http.StatusOK); s.Status == "OK" {
+        if err := json.NewEncoder(w).Encode(folders); err != nil {
+            panic(err)
+        }
+    }
+}
+
 func AddFolder(w http.ResponseWriter, r *http.Request) {
     folder, err := RequestToFolder(r)
         

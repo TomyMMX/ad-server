@@ -76,6 +76,12 @@ var routes = router.Routes{
         "/api/folders/parent/{parentId}",
         AddFolder,
     },
+	router.Route{
+        "FolderPath",
+        "GET",
+        "/api/folders/{folderId}/path",
+        GetFolderPath,
+    },
     router.Route{
         "RemoveFolder",
         "DELETE",

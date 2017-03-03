@@ -94,6 +94,21 @@ func UpdateAd(a Ad) error {
     return err
 }
 
+func GetFolder(folderId int) (Folder, error) {
+	folder := Folder{}
+
+    db, err := PrepareDbConnection()
+
+    if err != nil {
+        return folder, err
+    }
+
+    //get a specific folder
+    err = db.Get(&folder, "SELECT * FROM folder WHERE id = ?", folderId)
+
+    return folder, err
+}
+
 func GetFolders(parentId int) (Folders, error) {
     folders := Folders{}
 
