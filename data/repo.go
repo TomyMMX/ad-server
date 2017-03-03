@@ -9,6 +9,7 @@ import (
     "github.com/jmoiron/sqlx"
 )
 
+var dbHandle *sqlx.DB
 var connectionString string
 
 func SetConnectionString(s string){
@@ -16,7 +17,12 @@ func SetConnectionString(s string){
 }
 
 func PrepareDbConnection() (*sqlx.DB, error) {
-    return sqlx.Open("mysql", connectionString)
+	if dbHandle == nil{
+		return sqlx.Open("mysql", connectionString)
+	} else {
+		//reuse existing db handle
+		return dbHandle, nil
+	}
 }
 
 /*DB ACCESS FUNCTIONS*/
@@ -98,7 +104,7 @@ func GetFolders(parentId int) (Folders, error) {
     }
 
     //get all ads in the desired folder
-    err = db.Select(&folders, "SELECT * FROM folder WHERE parentid = ?", parentId)
+    err = db.Select(&folders, "SELECT * FROM folder WHERE parentid = ? ORDER BY name ASC", parentId)
 
     return folders, err
 }
