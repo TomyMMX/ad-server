@@ -10,6 +10,7 @@ import (
 
     "github.com/gorilla/mux"
     "github.com/TomyMMX/ad-server/data"
+	"github.com/TomyMMX/ad-server/logger"
 )
 
 type APIStatus struct {
@@ -33,7 +34,7 @@ func ReadRequestBody(r *http.Request) []byte {
     if err := r.Body.Close(); err != nil {
         panic(err)
     }
-    
+	
     return body;
 }
 
@@ -66,6 +67,8 @@ func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatu
     
     //set the status code
     if err != nil {
+		logger.Error(err.Error())
+		
         //TODO: set correct response status for different error types
         w.WriteHeader(http.StatusBadRequest)
         status = APIStatus{
@@ -233,12 +236,12 @@ func GetFolderPath(w http.ResponseWriter, r *http.Request) {
 	for folderId > 0 {
 		var f data.Folder
 		f, err = data.GetFolder(folderId)
+		
 		if err != nil {
 			break
 		}
 		
-		folderId = f.ParentId
-		
+		folderId = f.ParentId		
 		folders = append(folders, f)
 	}
 	
