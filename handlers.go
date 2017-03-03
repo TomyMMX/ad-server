@@ -60,8 +60,9 @@ func RequestToFolder(r *http.Request) (data.Folder, error) {
 func PrepareAPIResponse(w http.ResponseWriter, err error, okStatus int) APIStatus{
     //since we know that we are returning JSON set the correct content type
     w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
     
-    var status APIStatus
+	var status APIStatus
     
     //set the status code
     if err != nil {
