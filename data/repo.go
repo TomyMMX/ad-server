@@ -39,7 +39,7 @@ func GetAds(folderId int) (Ads, error) {
     }
 
     //get all ads in the desired folder
-    err = db.Select(&ads, "SELECT * FROM ad WHERE folderid = ?", folderId)
+    err = db.Select(&ads, "SELECT id, folderid, name, url, lastmodified FROM ad WHERE folderid = ? ORDER BY name ASC", folderId)
 
     return ads, err
 }
@@ -107,7 +107,7 @@ func GetFolder(folderId int) (Folder, error) {
     }
 
     //get a specific folder
-    err = db.Get(&folder, "SELECT * FROM folder WHERE id = ?", folderId)
+    err = db.Get(&folder, "SELECT id, parentid, name, lastmodified FROM folder WHERE id = ?", folderId)
 
     return folder, err
 }
@@ -122,7 +122,7 @@ func GetFolders(parentId int) (Folders, error) {
     }
 
     //get all ads in the desired folder
-    err = db.Select(&folders, "SELECT * FROM folder WHERE parentid = ? ORDER BY name ASC", parentId)
+    err = db.Select(&folders, "SELECT id, parentid, name, lastmodified FROM folder WHERE parentid = ? ORDER BY name ASC", parentId)
 
     return folders, err
 }
