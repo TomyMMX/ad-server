@@ -3,6 +3,7 @@ package data
 import (
     "time"
 	"errors"
+	"strings"
 	
 	"github.com/asaskevich/govalidator"
 )
@@ -16,16 +17,16 @@ type Folder struct {
 
 type Folders []Folder
 
-func (f Folder) Check() error {
+func (f Folder) Check() (bool, error) {
 	if f.Name == "" {
-        return errors.New("Folder name is empty.")
+        return false, errors.New("Folder name is empty.")
     }
 	
 	if !IsValidName(f.Name) {
-		return errors.New("Folder name is not a valid name.")
+		return false, errors.New("Folder name is not a valid name.")
 	}
     
-    return nil
+    return true, nil
 }
 
 type Ad struct {
@@ -38,27 +39,32 @@ type Ad struct {
 
 type Ads []Ad
 
-func (a Ad) Check() error {
+func (a Ad) Check() (bool, error) {
     if a.Name == "" {
-        return errors.New("Ad name is empty.")
+        return false, errors.New("Ad name is empty.")
     }
 	
 	if !IsValidName(a.Name) {
-		return errors.New("Ad name is not a valid name.")
+		return false, errors.New("Ad name is not a valid name.")
 	}
     
-    if a.Url == "" {
-        return errors.New("Ad URL is empty.")
+    if a.Url == "" {		
+        return false, errors.New("Ad URL is empty.")
     }
     
     if !govalidator.IsURL(a.Url) {
-        return errors.New("Ad URL is invalid.")
+        return false, errors.New("Ad URL is invalid.")
     }
     
-    return nil
+    return true, nil
 }
 
 func IsValidName(s string)  bool {
 	//TODO: check the string against a dictionary of invalid names and/or characters
+	
+	if strings.Contains(strings.ToLower(s), "badword"){
+		return false
+	}
+	
 	return true
 }

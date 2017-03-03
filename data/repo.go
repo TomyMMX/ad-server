@@ -51,8 +51,8 @@ func AddAd(a Ad) error {
         return err
     }
     
-    if err=a.Check(); err != nil {
-        return err;
+    if isOK, e := a.Check(); !isOK {
+        return e;
     }
         
     var folderCount int
@@ -88,8 +88,8 @@ func UpdateAd(a Ad) error {
         return err
     }
     
-    if err=a.Check(); err != nil {
-        return err;
+    if isOK, e := a.Check(); !isOK {
+        return e;
     }
 
     _, err = db.Query("UPDATE ad SET name=?, url=? WHERE id=?", a.Name, a.Url, a.Id)
@@ -134,8 +134,8 @@ func AddFolder(f Folder) error {
         return err
     }
     
-    if err=f.Check(); err != nil {
-        return err;
+    if isOK, e := f.Check(); !isOK {
+        return e;
     }
     
     //if adding int a existing folder, check if it exists
@@ -199,8 +199,8 @@ func UpdateFolder(f Folder) error {
         return err
     }
     
-    if err=f.Check(); err != nil {
-        return err;
+    if isOK, e := f.Check(); !isOK {
+        return e;
     }
 
     _, err = db.Query("UPDATE folder SET name=? WHERE id=?", f.Name, f.Id)
