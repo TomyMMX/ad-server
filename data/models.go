@@ -20,6 +20,10 @@ func (f Folder) Check() error {
 	if f.Name == "" {
         return errors.New("Folder name is empty.")
     }
+	
+	if !IsValidName(f.Name) {
+		return errors.New("Folder name is not a valid name.")
+	}
     
     return nil
 }
@@ -38,6 +42,10 @@ func (a Ad) Check() error {
     if a.Name == "" {
         return errors.New("Ad name is empty.")
     }
+	
+	if !IsValidName(a.Name) {
+		return errors.New("Ad name is not a valid name.")
+	}
     
     if a.Url == "" {
         return errors.New("Ad URL is empty.")
@@ -48,4 +56,9 @@ func (a Ad) Check() error {
     }
     
     return nil
+}
+
+func IsValidName(s string)  bool {
+	//TODO: check the string against a dictionary of invalid names and/or characters
+	return true
 }
