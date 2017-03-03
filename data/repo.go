@@ -18,7 +18,10 @@ func SetConnectionString(s string){
 
 func PrepareDbConnection() (*sqlx.DB, error) {
 	if dbHandle == nil{
-		return sqlx.Open("mysql", connectionString)
+		db, err := sqlx.Open("mysql", connectionString)
+		db.SetMaxIdleConns(0)
+		
+		return db, err
 	} else {
 		//reuse existing db handle
 		return dbHandle, nil
