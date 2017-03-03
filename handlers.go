@@ -228,7 +228,7 @@ func GetFolderPath(w http.ResponseWriter, r *http.Request) {
         return
     }
 	
-	var folders data.Folders
+	folders := data.Folders{} 
 	
 	for folderId > 0 {
 		var f data.Folder
