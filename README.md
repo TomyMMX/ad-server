@@ -1,27 +1,27 @@
 #Ad REST API
 ##Description
-REST API written in Go that provides different types of clients the abillity to perform CRUD operations on ads.  
-Ads in this case are simple (named) URLs organized into folders. Each folder can contain an arbitrary number of ads and subfolders.
+REST API written in Go that provides different types of clients the ability to perform CRUD operations on ads.  
+Ads in this case are simple (named) URLs organized into folders. Each folder can contain an arbitrary number of ads and sub-folders.
 
 ##Technology stack
 Written in Go.  
-The main reason beeing the simple nature of the task and Go beeing really good ad doing simple things really fast.  
+The main reason being the simple nature of the task and Go being really good at doing simple things really fast.  
 For most things the standard libraries are used the few exceptions are:
 * github.com/gorilla/mux - Nice router from the gorilla web toolkit: http://www.gorillatoolkit.org/pkg/mux 
 * github.com/go-sql-driver/mysql - A mysql driver for Go
-* github.com/jmoiron/sqlx - provides a set of extensions on go's standard database/sql library. Mainly usefull because it provides marshalling of rows into structs.
+* github.com/jmoiron/sqlx - provides a set of extensions on go's standard database/sql library. Mainly useful because it provides marshaling of rows into structs.
 * github.com/asaskevich/govalidator - for validating the ad URLs
 
 The database used is MySQL. No special reason for that... could have been any relational database. Actually changing the database would not require much work.
 
 ##Project organization  
-The main package is divided into two .go files. main.go and hanlders.go. This code provides tha backbone of the API server with all the necesery routes and hanlder functions to handle specific routes.  
+The main package is divided into two .go files. main.go and handlers.go. This code provides the backbone of the API server with all the necessary routes and handler functions to handle specific routes.  
 Other parts of the application are divided into 3 additional packages where the data package is the most important one. It contains code for our data models and code that communicates with the database.  
 The database schema for the rather simple two table database can be found in [DB/dbschema.sql](https://github.com/TomyMMX/ad-server/blob/master/DB/dbschema.sql).  
 
 ###Testing
 The only tests I could think of are at the model/data layer. Where tests check if the functions that check the validity of our Ad or Folder objects work for different edge type inputs.  
-The other thing here that should be tested are the functions that work with the database. So basicaly to check if adding, retreaving, updating and deleting works.  
+The other thing here that should be tested are the functions that work with the database. So basically to check if adding, retrieving, updating and deleting works.  
 My proficiency in Go is at this point a bit limited so I have no idea how to test the handler functions that work on the http request and respond to it. 
 
 ## API Reference
@@ -59,7 +59,7 @@ Content-Length: 79
 Add a folder at root level.
 
 **POST** */api/folders/parent/{parentId}*  
-Add a folder inside the fodler with id {parentId}.
+Add a folder inside the folder with id {parentId}.
 
 **Request:**
 ```JSON
@@ -168,7 +168,7 @@ Content-Length: 145
 ```
 
 **POST** */api/ads/folder/{folderId}*  
-Add a ad inside the fodler with id {folderId}.
+Add a ad inside the folder with id {folderId}.
 
 **Request:**
 ```JSON
